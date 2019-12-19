@@ -10,6 +10,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
+        "php": ">=7.1.0",
+        "firebase/php-jwt": "^5.0",
         "lazyskills/think-annotation": "dev-master"
     },
     "autoload": {
