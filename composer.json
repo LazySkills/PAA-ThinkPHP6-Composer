@@ -1,0 +1,30 @@
+{
+    "name": "lazyskills/paa-thinkphp6",
+    "description": "PAA-ThinkPHP6 Composer Package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "china_wangyu",
+            "email": "china_wangyu@163.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "lazyskills/think-annotation": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "paa\\annotation\\": "src"
+        }
+    },
+    "extra": {
+        "think": {
+            "services": [
+                "think\\annotation\\Service"
+            ],
+            "config": {
+                "annotation": "src/config.php"
+            }
+        }
+    }
+}
