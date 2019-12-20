@@ -1,11 +1,11 @@
 <?php
 /** Created by 嗝嗝<china_wangyu@aliyun.com>. Date: 2019-12-02  */
 
-namespace paa\annotation\common\document;
+namespace paa\common\document;
 
 
 use Doctrine\Common\Annotations\Annotation;
-use paa\annotation\common\authorize\Jwt;
+use paa\common\authorize\Jwt;
 use think\facade\Session;
 use think\facade\View;
 

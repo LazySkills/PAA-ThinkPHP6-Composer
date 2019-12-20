@@ -1,11 +1,11 @@
 <?php
 /** Created by 嗝嗝<china_wangyu@aliyun.com>. Date: 2019-11-20  */
 
-namespace paa\annotation\common\authorize;
+namespace paa\common\authorize;
 
 
 use Firebase\JWT\JWT as FirebaseJwt;
-use paa\annotation\exception\AuthenticationException;
+use paa\exception\AuthenticationException;
 
 class Jwt
 {

@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "paa\\annotation\\": "src"
+            "paa\\": "src"
         }
     },
     "extra": {
@@ -25,7 +25,8 @@
                 "think\\annotation\\Service"
             ],
             "config": {
-                "annotation": "src/config.php"
+                "annotation": "src/config.php",
+                "paa": "src/paa.php"
             }
         }
     }

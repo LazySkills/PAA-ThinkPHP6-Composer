@@ -1,7 +1,7 @@
 <?php
 /** Created by 嗝嗝<china_wangyu@aliyun.com>. Date: 2019-11-20  */
 
-namespace paa\annotation\exception;
+namespace paa\exception;
 
 
 class AuthenticationException extends \Exception
