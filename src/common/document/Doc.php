@@ -47,7 +47,7 @@ final class Doc
     public function setPaaRoute(\think\route\RuleItem &$rule)
     {
         $this->rule = $rule;
-        if (config('annotation.management') === true) {
+        if (config('paa.management.enable') === true) {
             $router = function () {
                 return $this->router;
             };
@@ -65,7 +65,7 @@ final class Doc
             })->middleware([\think\middleware\SessionInit::class]);
         }else{
             if (request()->url() == '/paa/index') {
-                throw new \Exception("注解配置文件中'annotation.management'应该为true");
+                throw new \Exception("`config/paa.php`配置文件中'paa.management.enable'应该为true");
             }
         }
     }
@@ -78,27 +78,18 @@ final class Doc
             if (request()->isPost()) {
                 $name = input('username');
                 $password = input('password');
-                if ($name == 'admin' and $password == 'supper') {
-                    $jwt = $this->jwt->encode($name, '1');
-                    Session::set('apiAuthorize', json_encode(input()));
-                    Session::set('isEdit', true);
-                    return json([
-                        'msg' => '登录成功',
-                        'code' => 200,
-                        'data' => [
-                            'url' => '/paa/index?token=' . $jwt['refresh_token']
-                        ]
-                    ], 200);
-                }
-                if ($name == 'web' and $password == '123456') {
-                    $jwt = $this->jwt->encode($name, '0');
-                    return json([
-                        'msg' => '登录成功',
-                        'code' => 200,
-                        'data' => [
-                            'url' => '/paa/index?token=' . $jwt['refresh_token']
-                        ]
-                    ], 200);
+                if ($member = config('paa.management.member')[$name]){
+                    if ($password === $member['password']){
+                        $jwt = $this->jwt->encode($name, $member['supper']);
+                        return json([
+                            'msg' => '登录成功',
+                            'code' => 200,
+                            'data' => [
+                                'url' => '/paa/index?token=' . $jwt['refresh_token']
+                            ]
+                        ], 200);
+                    }
+
                 }
             }
             throw new \Exception('登录失败');
