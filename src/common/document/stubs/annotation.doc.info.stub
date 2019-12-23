@@ -48,6 +48,9 @@
                     <div class="layui-col-lg6">
                         <label class="layui-form-label">参数验证：</label>
                         <div class="layui-input-block">
+                            {if is_string($info.validate)}
+                                <code class="layui-input">{$info.validate}::class</code>
+                            {else/}
                             <table class="layui-table">
                                 <thead>
                                     <tr>
@@ -66,6 +69,7 @@
                                 {/volist}
                                 </tbody>
                             </table>
+                            {/if}
                         </div>
                     </div>
                 </div>

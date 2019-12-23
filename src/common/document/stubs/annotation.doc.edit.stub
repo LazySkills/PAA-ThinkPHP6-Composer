@@ -50,24 +50,28 @@
                         <div class="layui-col-lg6">
                             <label class="layui-form-label">参数验证：</label>
                             <div class="layui-input-block">
+                                {if is_string($info.validate)}
+                                    <code class="layui-input">{$info.validate}::class</code>
+                                {else/}
                                 <table class="layui-table">
                                     <thead>
-                                    <tr>
-                                        <th>参数名称</th>
-                                        <th>参数注解</th>
-                                        <th>参数规则</th>
-                                    </tr>
+                                        <tr>
+                                            <th>参数名称</th>
+                                            <th>参数注解</th>
+                                            <th>参数规则</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                     {volist name="info.validate" id="vo"}
-                                    <tr>
-                                        <td>{$vo.name}</td>
-                                        <td>{$vo.doc}</td>
-                                        <td>{$vo.rule}</td>
-                                    </tr>
+                                        <tr>
+                                            <td>{$vo.name}</td>
+                                            <td>{$vo.doc}</td>
+                                            <td>{$vo.rule}</td>
+                                        </tr>
                                     {/volist}
                                     </tbody>
                                 </table>
+                                {/if}
                             </div>
                         </div>
                     </div>

@@ -31,7 +31,7 @@ final class Param extends Handler
         $rule->validate($rules);
     }
 
-    protected function getAnnotationValidateSceneRule($annotationRule,$scene,Validate $validateModel){
+    public function getAnnotationValidateSceneRule($annotationRule,$scene,Validate $validateModel){
         $rules = [];
         $getValidateModelRule = function (){
             return $this->rule;

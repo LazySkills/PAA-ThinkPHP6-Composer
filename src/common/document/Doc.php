@@ -5,6 +5,7 @@ namespace paa\common\document;
 
 
 use Doctrine\Common\Annotations\Annotation;
+use paa\annotation\handler\Param;
 use paa\common\authorize\Jwt;
 use think\facade\Session;
 use think\facade\View;
@@ -124,7 +125,7 @@ final class Doc
         $this->router->get('paa/index', function () {
             $jwt = $this->checkUserLogin();
             View::assign('isEdit', $jwt['signature']);
-            $annotations = $this->toArray();
+            $annotations = $this->toArray($jwt['signature']);
             View::assign('menus', $annotations);
             View::assign('token', input('token'));
             return View::display(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'annotation.doc.index.stub'));
@@ -139,6 +140,9 @@ final class Doc
             $params = request()->get();
             $apiInfo = $this->getUserAnnotationJson($params['rule']);
             $apiInfo['validate'] = $apiInfo['validate'][0];
+            if (is_string($apiInfo['validate'])){
+                $apiInfo['validate'] = (new Param())->getAnnotationValidateSceneRule([],null,new $apiInfo['validate']);
+            }
             foreach ($apiInfo['validate'] as $key => $item) {
                 $validateName = explode('|', $key);
                 $apiInfo['validate'][$key] = [
@@ -168,6 +172,9 @@ final class Doc
             $params = request()->get();
             $apiInfo = $this->getUserAnnotationJson($params['rule']);
             $apiInfo['validate'] = $apiInfo['validate'][0];
+            if (is_string($apiInfo['validate'])){
+                $apiInfo['validate'] = (new Param())->getAnnotationValidateSceneRule([],null,new $apiInfo['validate']);
+            }
             foreach ($apiInfo['validate'] as $key => $item) {
                 $validateName = explode('|', $key);
                 $apiInfo['validate'][$key] = [
@@ -272,7 +279,8 @@ final class Doc
      */
     public function setUserAnnotationJson(string $rule, array $docs = [])
     {
-        $this->annotation[$rule] = $docs;
+        $key = isset($this->annotation[0][$rule]) ? 0 : 1;
+        $this->annotation[$key][$rule] = $docs;
         $res = file_put_contents(
             root_path() . $this->path,
             json_encode($this->annotation, JSON_UNESCAPED_UNICODE),
@@ -284,7 +292,7 @@ final class Doc
     /** 获取用户注解json文件 */
     public function getUserAnnotationJson(string $rule)
     {
-        return $this->annotation[$rule] ?? [];
+        return $this->annotation[0][$rule] ?? $this->annotation[1][$rule] ?? [];
     }
 
     /** 获取注解json文件 */
@@ -318,7 +326,7 @@ final class Doc
         }
         $ruleData['doc'] = empty($annotation->group) ? $annotation->value: $annotation->group . '.' . $annotation->value;
         $ruleData['hide'] = $annotation->hide == 'false' ? false : true;
-        $data[$this->rule->getRule()] = $ruleData;
+        $data[intval($ruleData['hide'])][$this->rule->getRule()] = $ruleData;
         $this->setApiAnnotationJson($data);
     }
 
@@ -337,10 +345,11 @@ final class Doc
     }
 
     // 获取注解数据
-    public function toArray()
+    public function toArray(bool $suuper = false)
     {
         $annotations = [];
-        foreach ($this->annotation as $key => $item) {
+        $newAnnotation = $suuper ? array_merge($this->annotation[0],$this->annotation[1]) : $this->annotation[0];
+        foreach ($newAnnotation as $key => $item) {
             $annotations = $this->getRuleItem($item, $annotations);
         }
         return $annotations;
