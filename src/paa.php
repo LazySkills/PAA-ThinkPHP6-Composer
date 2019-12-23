@@ -20,11 +20,11 @@ return [
         'member' => [
             'admin' => [ # 用户名
                 'password' => 'supper', # 密码
-                'supper' => true, # true：超级管理员｜false：浏览者
+                'admin' => true, # true：超级管理员｜false：浏览者
             ],
             'web' => [ # 用户名
                 'password' => '123456', # 密码
-                'supper' => false, # true：超级管理员｜false：浏览者
+                'admin' => false, # true：超级管理员｜false：浏览者
             ]
         ],
     ]

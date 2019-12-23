@@ -82,7 +82,7 @@ final class Doc
                 try{
                     if ($member = config('paa.management.member')[$name]){
                         if ($password === $member['password']){
-                            $jwt = $this->jwt->encode($name, $member['supper']);
+                            $jwt = $this->jwt->encode($name, $member['admin']);
                             return json([
                                 'msg' => '登录成功',
                                 'code' => 200,
