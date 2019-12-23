@@ -318,7 +318,7 @@ final class Doc
     {
         $data = $this->getApiAnnotationJson();
         $ruleData = $this->getRuleData(
-            $data[$this->rule->getRule()] ?? [],
+            $this->annotation[0][$this->rule->getRule()] ?? $this->annotation[1][$this->rule->getRule()] ?? [],
             $this->rule
         );
         if (empty($annotation->value)) {
