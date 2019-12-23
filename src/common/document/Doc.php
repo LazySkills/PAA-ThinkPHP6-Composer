@@ -348,7 +348,9 @@ final class Doc
     public function toArray(bool $suuper = false)
     {
         $annotations = [];
-        $newAnnotation = $suuper ? array_merge($this->annotation[0],$this->annotation[1]) : $this->annotation[0];
+        $newAnnotation = $suuper
+            ? array_merge($this->annotation[0] ?? [],$this->annotation[1] ?? [])
+            : $this->annotation[0]  ?? [] ;
         foreach ($newAnnotation as $key => $item) {
             $annotations = $this->getRuleItem($item, $annotations);
         }
