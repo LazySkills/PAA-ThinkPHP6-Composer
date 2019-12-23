@@ -78,18 +78,21 @@ final class Doc
             if (request()->isPost()) {
                 $name = input('username');
                 $password = input('password');
-                if ($member = config('paa.management.member')[$name]){
-                    if ($password === $member['password']){
-                        $jwt = $this->jwt->encode($name, $member['supper']);
-                        return json([
-                            'msg' => '登录成功',
-                            'code' => 200,
-                            'data' => [
-                                'url' => '/paa/index?token=' . $jwt['refresh_token']
-                            ]
-                        ], 200);
+                try{
+                    if ($member = config('paa.management.member')[$name]){
+                        if ($password === $member['password']){
+                            $jwt = $this->jwt->encode($name, $member['supper']);
+                            return json([
+                                'msg' => '登录成功',
+                                'code' => 200,
+                                'data' => [
+                                    'url' => '/paa/index?token=' . $jwt['refresh_token']
+                                ]
+                            ], 200);
+                        }
                     }
-
+                }catch (\Exception $exception){
+                    throw new \Exception('登录失败,账户：'.$name.'不存在');
                 }
             }
             throw new \Exception('登录失败');
