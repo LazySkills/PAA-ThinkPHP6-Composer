@@ -10,7 +10,6 @@ return [
         'controllers' => [],
     ],
     'ignore' => [],
-    'management' => false, # 文档管理平台控制： true打开｜false关闭
     'custom' => [
         # 格式：注解类 => 注解操作类
         \paa\annotation\Param::class => \paa\annotation\handler\Param::class, # 单个参数验证器
