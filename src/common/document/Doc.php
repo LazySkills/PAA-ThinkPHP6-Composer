@@ -242,9 +242,11 @@ final class Doc
     {
         if (!empty($this->router->getRule('paa/refresh'))) return;
         $this->router->get('paa/refresh', function () {
-            foreach ($this->annotation as $key => $item) {
-                if (empty($this->router->getRule($key))) {
-                    unset($this->annotation[$key]);
+            foreach ($this->annotation as  $annotation) {
+                foreach ($annotation as $key => $item){
+                    if (empty($this->router->getRule($key))) {
+                        unset($this->annotation[$key]);
+                    }
                 }
             }
             $this->setApiAnnotationJson($this->annotation);
@@ -279,8 +281,7 @@ final class Doc
      */
     public function setUserAnnotationJson(string $rule, array $docs = [])
     {
-        $key = isset($this->annotation[0][$rule]) ? 0 : 1;
-        $this->annotation[$key][$rule] = $docs;
+        $this->annotation[0][$rule] = $docs;
         $res = file_put_contents(
             root_path() . $this->path,
             json_encode($this->annotation, JSON_UNESCAPED_UNICODE),
