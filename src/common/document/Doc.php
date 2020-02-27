@@ -139,17 +139,21 @@ final class Doc
         $this->router->get('paa/info', function () {
             $params = request()->get();
             $apiInfo = $this->getUserAnnotationJson($params['rule']);
-            $apiInfo['validate'] = $apiInfo['validate'][0];
-            if (is_string($apiInfo['validate'])){
-                $apiInfo['validate'] = (new Param())->getAnnotationValidateSceneRule([],null,new $apiInfo['validate']);
-            }
-            foreach ($apiInfo['validate'] as $key => $item) {
-                $validateName = explode('|', $key);
-                $apiInfo['validate'][$key] = [
-                    'name' => $validateName[0],
-                    'doc' => $validateName[1] ?? '',
-                    'rule' => $item
-                ];
+            if (isset( $apiInfo['validate'][0])){
+                $apiInfo['validate'] = $apiInfo['validate'][0];
+                if (is_string($apiInfo['validate'])){
+                    $apiInfo['validate'] = (new Param())->getAnnotationValidateSceneRule([],null,new $apiInfo['validate']);
+                }
+                foreach ($apiInfo['validate'] as $key => $item) {
+                    $validateName = explode('|', $key);
+                    $apiInfo['validate'][$key] = [
+                        'name' => $validateName[0],
+                        'doc' => $validateName[1] ?? '',
+                        'rule' => $item
+                    ];
+                }
+            }else{
+                $apiInfo['validate'] = [];
             }
             $apiInfo['success'] = json_encode($apiInfo['success']);
             $apiInfo['error'] = json_encode($apiInfo['error']);
@@ -171,17 +175,21 @@ final class Doc
             }
             $params = request()->get();
             $apiInfo = $this->getUserAnnotationJson($params['rule']);
-            $apiInfo['validate'] = $apiInfo['validate'][0];
-            if (is_string($apiInfo['validate'])){
-                $apiInfo['validate'] = (new Param())->getAnnotationValidateSceneRule([],null,new $apiInfo['validate']);
-            }
-            foreach ($apiInfo['validate'] as $key => $item) {
-                $validateName = explode('|', $key);
-                $apiInfo['validate'][$key] = [
-                    'name' => $validateName[0],
-                    'doc' => $validateName[1] ?? '',
-                    'rule' => $item
-                ];
+            if (isset( $apiInfo['validate'][0])){
+                $apiInfo['validate'] = $apiInfo['validate'][0];
+                if (is_string($apiInfo['validate'])){
+                    $apiInfo['validate'] = (new Param())->getAnnotationValidateSceneRule([],null,new $apiInfo['validate']);
+                }
+                foreach ($apiInfo['validate'] as $key => $item) {
+                    $validateName = explode('|', $key);
+                    $apiInfo['validate'][$key] = [
+                        'name' => $validateName[0],
+                        'doc' => $validateName[1] ?? '',
+                        'rule' => $item
+                    ];
+                }
+            }else{
+                $apiInfo['validate'] = [];
             }
             $token = $params['token'];
             $apiInfo['success'] = json_encode($apiInfo['success']);
