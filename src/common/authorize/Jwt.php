@@ -28,6 +28,9 @@ class Jwt
     {
         if (empty($token)){
             static::check();
+            if (!isset(self::$data['exp'])){
+                throw new AuthenticationException("refresh_token不能用来鉴权");
+            }
         }else{
             static::$data = (array)FirebaseJwt::decode($token,config('paa.jwt.key'),['HS256']);
         }
@@ -75,9 +78,12 @@ class Jwt
 
     public static function refresh()
     {
-        $payload = static::decode();
-        self::$uniqueId = $payload['uniqueId'];
-        self::$signature = $payload['signature'];
+        static::check();
+        if (isset(self::$data['exp'])){
+            throw new AuthenticationException("access_token不能用来刷新鉴权");
+        }
+        self::$uniqueId = self::$data['uniqueId'];
+        self::$signature = self::$data['signature'];
         return ['access_token'=>static::create()];
     }
 
