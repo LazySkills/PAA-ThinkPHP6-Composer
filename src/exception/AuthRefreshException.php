@@ -4,9 +4,9 @@
 namespace paa\exception;
 
 
-class AuthenticationException extends \Exception
+class AuthRefreshException extends \Exception
 {
-    protected $message = '鉴权错误';
+    protected $message = '刷新鉴权有误';
     protected $code = 400;
-    protected $error_code = 10040;
+    protected $error_code = 10050;
 }

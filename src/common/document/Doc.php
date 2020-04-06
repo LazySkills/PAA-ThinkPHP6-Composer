@@ -87,7 +87,7 @@ final class Doc
                                 'msg' => '登录成功',
                                 'code' => 200,
                                 'data' => [
-                                    'url' => '/paa/index?token=' . $jwt['refresh_token']
+                                    'url' => '/paa/index?token=' . $jwt['access_token']
                                 ]
                             ], 200);
                         }

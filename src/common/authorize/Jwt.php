@@ -6,6 +6,7 @@ namespace paa\common\authorize;
 
 use Firebase\JWT\JWT as FirebaseJwt;
 use paa\exception\AuthenticationException;
+use paa\exception\AuthRefreshException;
 
 class Jwt
 {
@@ -18,8 +19,8 @@ class Jwt
         self::$uniqueId = $uniqueId;
         self::$signature = $signature;
         return [
-            'access_token' => static::create(),
-            'refresh_token' => static::create(false)
+            'access_token' => static::create(false),
+            'refresh_token' => static::create(true)
         ];
     }
 
@@ -28,11 +29,8 @@ class Jwt
     {
         if (empty($token)){
             static::check();
-            if (!isset(self::$data['exp'])){
-                throw new AuthenticationException("refresh_token不能用来鉴权");
-            }
         }else{
-            static::$data = (array)FirebaseJwt::decode($token,config('paa.jwt.key'),['HS256']);
+            static::$data = (array)FirebaseJwt::decode($token,static::getTokenKey(),['HS256']);
         }
         return static::$data;
     }
@@ -58,17 +56,17 @@ class Jwt
     }
 
 
-    public static function check():void
+    public static function check(bool $refresh = false):void
     {
         list($type, $token) = static::getHeaderAuthorization();
         try {
-            static::$data = (array)\Firebase\JWT\JWT::decode($token, config('paa.jwt.key'), ['HS256']);
+            static::$data = (array)\Firebase\JWT\JWT::decode($token, static::getTokenKey($refresh), ['HS256']);
         } catch (\Firebase\JWT\SignatureInvalidException $exception) {  //签名不正确
-            throw new AuthenticationException('令牌签名不正确');
+            throw new AuthenticationException('令牌签名不正确，请确认令牌有效性或令牌类型');
         } catch (\Firebase\JWT\BeforeValidException $exception) {  // 签名在某个时间点之后才能用
             throw new AuthenticationException('令牌尚未生效');
         } catch (\Firebase\JWT\ExpiredException $exception) {  // token过期
-            throw new AuthenticationException('令牌已过期，刷新浏览器重试');
+            throw new AuthRefreshException('令牌已过期，刷新浏览器重试');
         } catch (\UnexpectedValueException $exception) {
             throw new AuthenticationException('access_token不正确，' . $exception->getMessage());
         } catch (\Exception $exception) {  //其他错误
@@ -79,22 +77,18 @@ class Jwt
     public static function refresh()
     {
         static::check();
-        if (isset(self::$data['exp'])){
-            throw new AuthenticationException("access_token不能用来刷新鉴权");
-        }
         self::$uniqueId = self::$data['uniqueId'];
         self::$signature = self::$data['signature'];
-        return ['access_token'=>static::create()];
+        return ['access_token'=>static::create(false)];
     }
 
 
     /**
      * 创建JWT鉴权
-     * @param bool $expire 是否会失效 true|false
-     * @return string
+     * @return string 是否为刷新鉴权
      * @throws AuthenticationException
      */
-    private static function create(bool $expire = true){
+    private static function create(bool $refresh = false){
         $payload = config('paa.jwt.payload');
         if (empty($payload)){
             throw new AuthenticationException('请检查paa配置文件中jwt选项是否正确');
@@ -102,11 +96,17 @@ class Jwt
         $payload['iat'] = time();
         $payload['uniqueId'] = static::$uniqueId;
         $payload['signature'] = static::$signature;
-        if ($expire === true) {
-            $payload['exp'] = $payload['iat'] + config('paa.jwt.time');
-        }else{
-            unset($payload['exp']);
-        }
-        return FirebaseJwt::encode($payload, config('paa.jwt.key'), 'HS256');
+        $payload['exp'] = static::getTokenExpire($refresh);
+        return FirebaseJwt::encode($payload, static::getTokenKey($refresh), 'HS256');
+    }
+
+
+    public static function getTokenKey(bool $refresh = false){
+        return $refresh ?  config('paa.jwt.key').".refresh" : config('paa.jwt.key') ;
+    }
+
+    public static function getTokenExpire(bool $refresh = false){
+        $exp = $refresh ? config('paa.jwt.refresh_exp') : config('paa.jwt.access_exp');
+        return $payload['exp'] = time() + $exp;
     }
 }

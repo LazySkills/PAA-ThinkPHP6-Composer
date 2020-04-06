@@ -6,7 +6,8 @@ return [
         'type' => 'Bearer', // 授权类型
         'request' => 'header', // 请求方式
         'param' => 'authorization', // 授权名称
-        'time' => 7200, //token有效时长
+        'access_exp' => 7200, //access_token 过期时间：2小时
+        'refresh_exp' => 84000 * 30, //refresh_token 过期时间：30天
         'payload' => [
             'iss' => 'PAA-ThinkPHP6', //签发者
             'iat' => '', //什么时候签发的
