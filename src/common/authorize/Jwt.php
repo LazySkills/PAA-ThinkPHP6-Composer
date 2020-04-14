@@ -76,7 +76,7 @@ class Jwt
 
     public static function refresh()
     {
-        static::check();
+        static::check(true);
         self::$uniqueId = self::$data['uniqueId'];
         self::$signature = self::$data['signature'];
         return ['access_token'=>static::create(true)];
