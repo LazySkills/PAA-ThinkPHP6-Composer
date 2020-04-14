@@ -79,7 +79,7 @@ class Jwt
         static::check();
         self::$uniqueId = self::$data['uniqueId'];
         self::$signature = self::$data['signature'];
-        return ['access_token'=>static::create(false)];
+        return ['access_token'=>static::create(true)];
     }
 
 
