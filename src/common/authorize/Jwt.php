@@ -96,7 +96,11 @@ class Jwt
         $payload['iat'] = time();
         $payload['uniqueId'] = static::$uniqueId;
         $payload['signature'] = static::$signature;
-        $payload['exp'] = static::getTokenExpire($refresh);
+        if($payload['exp']  == 0){
+            unset($payload['exp']);
+        } else{
+            $payload['exp'] = static::getTokenExpire($refresh);
+        }
         return FirebaseJwt::encode($payload, static::getTokenKey($refresh), 'HS256');
     }
 
